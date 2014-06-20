@@ -4,8 +4,17 @@ module.exports = function (grunt) {
     grunt.initConfig({
         sync: {
             main: {
-                files:[{src: ['C:\\Users\\goyalvik\\wmcm_moe\\moe-app\\src\\main\\resources\\**\\*.*'], dest: ''},
-                    {src: ['C:\\Users\\goyalvik\\wmcm_moe\\moe-app\\src\\test\\**\\*.*'], dest: ''}],
+                files:[{
+                    src: [
+                        'C:\\Users\\goyalvik\\wmcm_moe\\moe-app\\src\\main\\resources\\**\\*.*',
+                        '!C:\\Users\\goyalvik\\wmcm_moe\\moe-app\\src\\main\\resources\\coverage\\**',
+                        '!C:\\Users\\goyalvik\\wmcm_moe\\moe-app\\src\\main\\resources\\buildinfo.txt'
+                    ],
+                    dest: ''
+                }, {
+                    src: ['C:\\Users\\goyalvik\\wmcm_moe\\moe-app\\src\\test\\**\\*.*'],
+                    dest: ''
+                }],
                 verbose: true
             }
         },
@@ -22,6 +31,14 @@ module.exports = function (grunt) {
                     'C:\\Users\\goyalvik\\wmcm_moe\\moe-app\\src\\main\\resources\\application\\shared\\core\\extensions\\handlebars-templates.js'
                 ],
                 tasks: ['sync']
+            }
+        },
+        notify: {
+            sync: {
+                options: {
+                    title: 'Task Complete',  // optional
+                    message: 'SASS and Uglify finished running'
+                }
             }
         }
     });
@@ -47,6 +64,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sync');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-gitinfo');
+    grunt.loadNpmTasks('grunt-notify');
 
     grunt.registerTask('saveGitVersion', function () {
         var done = this.async(),
@@ -70,11 +88,13 @@ module.exports = function (grunt) {
     });
     grunt.registerTask('cleanRemote', function () {
         var done = this.async(),
+            branchName = grunt.config.get('branchName'),
             async = require('async'),
             commands = [
-                ["clean", "-fd"],
+                ["clean", "-ffdx"],
                 ["reset", "--hard", "HEAD"],
-                ["checkout", grunt.config.get('branchName')]
+                ["checkout", "-f",  branchName],
+                ["pull", "fork", branchName]
             ];
         async.eachSeries(commands, function (command, callback) {
             grunt.log.writeln('*-----------------------------*');
