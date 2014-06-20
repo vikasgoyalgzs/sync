@@ -32,14 +32,6 @@ module.exports = function (grunt) {
                 ],
                 tasks: ['sync']
             }
-        },
-        notify: {
-            sync: {
-                options: {
-                    title: 'Task Complete',  // optional
-                    message: 'SASS and Uglify finished running'
-                }
-            }
         }
     });
 
@@ -64,7 +56,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sync');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-gitinfo');
-    grunt.loadNpmTasks('grunt-notify');
 
     grunt.registerTask('saveGitVersion', function () {
         var done = this.async(),
