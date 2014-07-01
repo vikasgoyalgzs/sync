@@ -32,6 +32,16 @@ module.exports = function (grunt) {
                 ],
                 tasks: ['sync']
             }
+        },
+        sshexec: {
+            sync: {
+                command: 'sh ~/wmcm_moe/remoteSync.sh <%= branchName %>',
+                options: {
+                    host: 'dd605c1n1.ms.com',
+                    username: 'goyalvik',
+                    password: '$iclass01'
+                }
+            }
         }
     });
 
@@ -56,6 +66,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sync');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-gitinfo');
+    grunt.loadNpmTasks('grunt-ssh');
 
     grunt.registerTask('saveGitVersion', function () {
         var done = this.async(),
@@ -68,7 +79,9 @@ module.exports = function (grunt) {
                 if (!grunt.file.exists(versionFilePath) || grunt.file.read(versionFilePath) !== result.stdout) {
                     grunt.file.write(versionFilePath, result.stdout);
                     grunt.config('branchName', result.stdout);
-                    grunt.task.run('cleanRemote');
+                    grunt.task.run('sshexec');
+                    grunt.task.run('sync');
+                    //grunt.task.run('cleanRemote');
                 } else {
                     grunt.task.run('sync');
                 }
